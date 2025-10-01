@@ -19,14 +19,14 @@ class Door extends hz.Component<typeof Door> {
     this.totalOpeningRotation = 90;
     this.totalOpeningDuration = this.totalOpeningRotation / this.props.openingSpeed;
 
-    // this.addOpenDoorInput();
+    this.addOpenDoorInput();
 
     this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerEnterTrigger, () => {
-      this.isOpening = true;
-      this.startTime = Date.now();
+      // this.isOpening = true;
+      // this.startTime = Date.now();
 
       //TODO: NO FUTURO ALTERAR PARA O CAN OPEN E LIDAR COM INPUT
-      // this.canOpenDoor = true;
+      this.canOpenDoor = true;
     });
 
     this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerExitTrigger, () => {
@@ -79,9 +79,12 @@ class Door extends hz.Component<typeof Door> {
     );
 
     playerInput.registerCallback((action, pressed) => {
+      console.log('entrou no callback');
       if (pressed && action == hz.PlayerInputAction.RightGrip) {
+        console.log('right grip ou E');
         // this.sendLocalEvent(this.Player, LocalEvents.OPEN_INVENTORY_UI, {});
         if (this.canOpenDoor) {
+          console.log('vai abrir porta');
           this.isOpening = true;
           this.startTime = Date.now();
         }
