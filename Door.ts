@@ -4,10 +4,9 @@ class Door extends hz.Component<typeof Door> {
   static propsDefinition = {
     doorParentEntity: { type: hz.PropTypes.Entity },
     triggerEntity: { type: hz.PropTypes.Entity },
-    openingSpeed: { type: hz.PropTypes.Number, default: 1.0 },
+    openingSpeed: { type: hz.PropTypes.Number, default: 50.0 },
   };
 
-  private canOpenDoor = false;
   private isOpening = false;
   private isOpen = false;
   private totalOpeningRotation = 0;
@@ -15,22 +14,17 @@ class Door extends hz.Component<typeof Door> {
   private startTime = 0;
 
   start() {
-    console.log('start');
+    console.log('start door');
     this.totalOpeningRotation = 90;
     this.totalOpeningDuration = this.totalOpeningRotation / this.props.openingSpeed;
 
-    this.addOpenDoorInput();
-
     this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerEnterTrigger, () => {
-      // this.isOpening = true;
-      // this.startTime = Date.now();
-
-      //TODO: NO FUTURO ALTERAR PARA O CAN OPEN E LIDAR COM INPUT
-      this.canOpenDoor = true;
-    });
-
-    this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerExitTrigger, () => {
-      this.canOpenDoor = false;
+      const canOpen = !this.isOpening && !this.isOpen;
+      if (canOpen) {
+        console.log('vai abrir porta');
+        this.isOpening = true;
+        this.startTime = Date.now();
+      }
     });
 
     this.connectLocalBroadcastEvent(hz.World.onUpdate, () => {
@@ -68,28 +62,6 @@ class Door extends hz.Component<typeof Door> {
     let newRotation = hz.Vec3.lerp(startRotation, endRotation, openingProgressFraction);
     let newQuaternion = hz.Quaternion.fromEuler(newRotation);
     this.props.doorParentEntity!.rotation.set(newQuaternion);
-  }
-
-  private addOpenDoorInput() {
-    console.log('addOpenDoorInput');
-    const playerInput = hz.PlayerControls.connectLocalInput(
-      hz.PlayerInputAction.RightGrip,
-      hz.ButtonIcon.Door,
-      this,
-    );
-
-    playerInput.registerCallback((action, pressed) => {
-      console.log('entrou no callback');
-      if (pressed && action == hz.PlayerInputAction.RightGrip) {
-        console.log('right grip ou E');
-        // this.sendLocalEvent(this.Player, LocalEvents.OPEN_INVENTORY_UI, {});
-        if (this.canOpenDoor) {
-          console.log('vai abrir porta');
-          this.isOpening = true;
-          this.startTime = Date.now();
-        }
-      }
-    });
   }
 }
 
