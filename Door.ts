@@ -55,7 +55,6 @@ class Door extends hz.Component<typeof Door> {
 
     const elapsedTime = (Date.now() - this.startTime) / 1000;
     let openingProgressFraction = elapsedTime / this.totalOpeningDuration;
-    console.log(openingProgressFraction);
 
     let doorFinishedOpening = openingProgressFraction >= 1;
     if (doorFinishedOpening) {
