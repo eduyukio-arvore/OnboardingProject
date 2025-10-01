@@ -39,7 +39,6 @@ class Door extends hz.Component<typeof Door> {
     this.startRotation = this.isOpen ? 90 : 0;
     this.finalRotation = this.isOpen ? 0 : 90;
     this.animationDuration = 90 / this.props.openingSpeed;
-    console.log(this.animationDuration);
 
     this.startTime = Date.now();
     this.isAnimating = true;
