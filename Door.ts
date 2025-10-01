@@ -7,24 +7,16 @@ class Door extends hz.Component<typeof Door> {
     openingSpeed: { type: hz.PropTypes.Number, default: 50.0 },
   };
 
-  private isOpening = false;
+  private isAnimating = false;
   private isOpen = false;
-  private totalOpeningRotation = 0;
-  private totalOpeningDuration = 0;
+  private startRotation = 0;
+  private finalRotation = 0;
+  private animationDuration = 0;
   private startTime = 0;
 
   start() {
-    console.log('start door');
-    this.totalOpeningRotation = 90;
-    this.totalOpeningDuration = this.totalOpeningRotation / this.props.openingSpeed;
-
     this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerEnterTrigger, () => {
-      const canOpen = !this.isOpening && !this.isOpen;
-      if (canOpen) {
-        console.log('vai abrir porta');
-        this.isOpening = true;
-        this.startTime = Date.now();
-      }
+      this.onPlayerTriggeredDoor();
     });
 
     this.connectLocalBroadcastEvent(hz.World.onUpdate, () => {
@@ -33,34 +25,47 @@ class Door extends hz.Component<typeof Door> {
   }
 
   private updateDoorState() {
-    if (this.isOpen) return;
-
-    if (this.isOpening) {
-      this.openDoor();
+    if (this.isAnimating) {
+      this.animateDoor();
     }
   }
 
-  private openDoor() {
-    console.log('open door');
+  private onPlayerTriggeredDoor() {
+    console.log('onPlayerTriggeredDoor');
 
-    if (this.totalOpeningDuration <= 0) {
+    //TODO: fazer a porta poder ser interagida no meio da animação
+    if (this.isAnimating) return;
+
+    this.startRotation = this.isOpen ? 90 : 0;
+    this.finalRotation = this.isOpen ? 0 : 90;
+    this.animationDuration = 90 / this.props.openingSpeed;
+    console.log(this.animationDuration);
+
+    this.startTime = Date.now();
+    this.isAnimating = true;
+  }
+
+  private animateDoor() {
+    console.log('animateDoor');
+
+    if (this.animationDuration <= 0) {
       return;
     }
 
     const elapsedTime = (Date.now() - this.startTime) / 1000;
-    let openingProgressFraction = elapsedTime / this.totalOpeningDuration;
+    let animationProgressFraction = elapsedTime / this.animationDuration;
 
-    let doorFinishedOpening = openingProgressFraction >= 1;
-    if (doorFinishedOpening) {
-      this.isOpening = false;
-      this.isOpen = true;
+    let isAnimationFinished = animationProgressFraction >= this.animationDuration;
+    if (isAnimationFinished) {
+      this.isAnimating = false;
+      this.isOpen = !this.isOpen;
       return;
     }
 
-    const startRotation = new hz.Vec3(0, 0, 0);
-    const endRotation = new hz.Vec3(0, 90, 0);
-    let newRotation = hz.Vec3.lerp(startRotation, endRotation, openingProgressFraction);
-    let newQuaternion = hz.Quaternion.fromEuler(newRotation);
+    const startRotation = new hz.Vec3(0, this.startRotation, 0);
+    const endRotation = new hz.Vec3(0, this.finalRotation, 0);
+    let newEulerRotation = hz.Vec3.lerp(startRotation, endRotation, animationProgressFraction);
+    let newQuaternion = hz.Quaternion.fromEuler(newEulerRotation);
     this.props.doorParentEntity!.rotation.set(newQuaternion);
   }
 }
