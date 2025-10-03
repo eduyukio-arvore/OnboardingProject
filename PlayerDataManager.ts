@@ -32,7 +32,7 @@ export class PlayerDataManager extends hz.Component<typeof PlayerDataManager> {
    * @param player The player to check.
    * @returns True if the player has the key, false otherwise.
    */
-  public getPlayerHasKey(player: hz.Player): boolean {
+  public playerHasKey(player: hz.Player): boolean {
     console.log('PlayerDataManager getPlayerHasKey');
     return this.playerKeyStatus.get(player.id) || false;
   }

@@ -49,7 +49,7 @@ class Door extends hz.Component<typeof Door> {
 
     if (this.isAnimating) return;
     if (this.isLocked) {
-      let playerHasKey: boolean = PlayerDataManager.instance.getPlayerHasKey(player);
+      let playerHasKey: boolean = PlayerDataManager.instance.playerHasKey(player);
       if (playerHasKey) {
         this.isLocked = false;
         this.world.ui.showPopupForPlayer(player, 'Door unlocked.', 2);
