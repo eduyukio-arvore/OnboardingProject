@@ -18,10 +18,21 @@ class Key extends hz.Component<typeof Key> {
     });
   }
 
+  /**
+   * Callback function that is called when the player grabs the key.
+   * It sets on the PlayerDataManager that this player has a key.
+   * @param player The player that interacted with the Key.
+   */
   private onKeyGrabbed(isRightHand: boolean, player: hz.Player) {
     console.log('PLAYER GRABBED KEY');
     PlayerDataManager.instance.setPlayerHasKey(player, true);
   }
+
+  /**
+   * Callback function that is called when the player drops the key.
+   * It sets on the PlayerDataManager that this player don't have key.
+   * @param player The player that interacted with the Key.
+   */
   private onKeyDropped(player: hz.Player) {
     console.log('PLAYER DROPPED KEY');
     PlayerDataManager.instance.setPlayerHasKey(player, false);

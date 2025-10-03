@@ -30,12 +30,20 @@ class Door extends hz.Component<typeof Door> {
     });
   }
 
+  /**
+   * Updates the door state, running the opening/closing animation if it's needed
+   */
   private updateDoorState() {
     if (this.isAnimating) {
       this.animateDoor();
     }
   }
 
+  /**
+   * Callback function that is called when the player interacts with the door's trigger zone.
+   * It opens the door if it's closed, and closes the door if it's open.
+   * @param player The player that interacted with the door.
+   */
   private onPlayerTriggeredDoor(player: hz.Player) {
     console.log('onPlayerTriggeredDoor');
 
