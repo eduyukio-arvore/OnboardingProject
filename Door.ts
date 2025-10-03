@@ -14,7 +14,8 @@ class Door extends hz.Component<typeof Door> {
   private finalRotation: number = 0;
   private animationDuration: number = 0;
   private startTime: number = 0;
-  private maxAngle: number = 90;
+  private maxOpeningAngle: number = 90;
+  private updateIntervalTickSec: number = 0.02;
 
   start() {
     this.connectCodeBlockEvent(
@@ -25,9 +26,9 @@ class Door extends hz.Component<typeof Door> {
       },
     );
 
-    this.connectLocalBroadcastEvent(hz.World.onUpdate, () => {
+    this.async.setInterval(() => {
       this.updateDoorState();
-    });
+    }, this.updateIntervalTickSec * 1000);
   }
 
   /**
@@ -60,18 +61,27 @@ class Door extends hz.Component<typeof Door> {
       }
     }
 
-    this.startRotation = this.isOpen ? this.maxAngle : 0;
-    this.finalRotation = this.isOpen ? 0 : this.maxAngle;
-    this.animationDuration = this.maxAngle / this.props.openingSpeed;
+    this.startRotation = this.isOpen ? this.maxOpeningAngle : 0;
+    this.finalRotation = this.isOpen ? 0 : this.maxOpeningAngle;
+    this.animationDuration = this.maxOpeningAngle / this.props.openingSpeed;
 
     this.startTime = Date.now();
     this.isAnimating = true;
   }
 
+  /**
+   * Animates the door when it is opening or closing.
+   */
   private animateDoor() {
     console.log('animateDoor');
 
+    if (!this.props.doorParentEntity) {
+      console.error('Door Parent reference missing.');
+      return;
+    }
+
     if (this.animationDuration <= 0) {
+      console.error('The door animation duration must be positive.');
       return;
     }
 
@@ -91,9 +101,8 @@ class Door extends hz.Component<typeof Door> {
     let newEulerRotation = hz.Vec3.lerp(startRotation, endRotation, animationProgressFraction);
     let newQuaternionRotation = hz.Quaternion.fromEuler(newEulerRotation);
 
-    this.props.doorParentEntity!.rotation.set(newQuaternionRotation);
+    this.props.doorParentEntity.rotation.set(newQuaternionRotation);
   }
 }
 
 hz.Component.register(Door);
-
