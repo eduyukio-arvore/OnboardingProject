@@ -8,7 +8,7 @@ export class PlayerDataManager extends hz.Component<typeof PlayerDataManager> {
   constructor() {
     super();
     if (PlayerDataManager.instance) {
-      console.error('Another instance of PlayerDataManager already exists!');
+      console.error('[PlayerDataManager] Another instance of PlayerDataManager already exists!');
       return;
     }
     PlayerDataManager.instance = this;
@@ -22,9 +22,8 @@ export class PlayerDataManager extends hz.Component<typeof PlayerDataManager> {
    * @param hasKey True if the player has a key, false otherwise.
    */
   public setPlayerHasKey(player: hz.Player, hasKey: boolean): void {
-    console.log('PlayerDataManager setPlayerHasKey');
     this.playerKeyStatus.set(player.id, hasKey);
-    console.log(`Player ${player.name.get()} key status set to: ${hasKey}`);
+    console.log(`[PlayerDataManager] Player ${player.name.get()} key status set to: ${hasKey}`);
   }
 
   /**
@@ -33,7 +32,6 @@ export class PlayerDataManager extends hz.Component<typeof PlayerDataManager> {
    * @returns True if the player has the key, false otherwise.
    */
   public playerHasKey(player: hz.Player): boolean {
-    console.log('PlayerDataManager getPlayerHasKey');
     return this.playerKeyStatus.get(player.id) || false;
   }
 }

@@ -46,7 +46,7 @@ class Door extends hz.Component<typeof Door> {
    * @param player The player that interacted with the door.
    */
   private onPlayerTriggeredDoor(player: hz.Player) {
-    console.log('onPlayerTriggeredDoor');
+    console.log('[Door] onPlayerTriggeredDoor');
 
     if (this.isAnimating) return;
     if (this.isLocked) {
@@ -73,15 +73,13 @@ class Door extends hz.Component<typeof Door> {
    * Animates the door when it is opening or closing.
    */
   private animateDoor() {
-    console.log('animateDoor');
-
     if (!this.props.doorParentEntity) {
-      console.error('Door Parent reference missing.');
+      console.error('[Door] Door Parent reference missing.');
       return;
     }
 
     if (this.animationDuration <= 0) {
-      console.error('The door animation duration must be positive.');
+      console.error('[Door] The door animation duration must be positive.');
       return;
     }
 

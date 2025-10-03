@@ -24,7 +24,6 @@ class Key extends hz.Component<typeof Key> {
    * @param player The player that interacted with the Key.
    */
   private onKeyGrabbed(isRightHand: boolean, player: hz.Player) {
-    console.log('PLAYER GRABBED KEY');
     PlayerDataManager.instance.setPlayerHasKey(player, true);
   }
 
@@ -34,7 +33,6 @@ class Key extends hz.Component<typeof Key> {
    * @param player The player that interacted with the Key.
    */
   private onKeyDropped(player: hz.Player) {
-    console.log('PLAYER DROPPED KEY');
     PlayerDataManager.instance.setPlayerHasKey(player, false);
   }
 }
