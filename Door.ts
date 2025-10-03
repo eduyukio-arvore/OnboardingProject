@@ -1,23 +1,29 @@
 import * as hz from 'horizon/core';
+import { PlayerDataManager } from './PlayerDataManager';
 
 class Door extends hz.Component<typeof Door> {
   static propsDefinition = {
     doorParentEntity: { type: hz.PropTypes.Entity },
-    triggerEntity: { type: hz.PropTypes.Entity },
     openingSpeed: { type: hz.PropTypes.Number, default: 50.0 },
   };
 
-  private isAnimating = false;
-  private isOpen = false;
-  private startRotation = 0;
-  private finalRotation = 0;
-  private animationDuration = 0;
-  private startTime = 0;
+  private isAnimating: boolean = false;
+  private isOpen: boolean = false;
+  private isLocked: boolean = true;
+  private startRotation: number = 0;
+  private finalRotation: number = 0;
+  private animationDuration: number = 0;
+  private startTime: number = 0;
+  private maxAngle: number = 90;
 
   start() {
-    this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnPlayerEnterTrigger, () => {
-      this.onPlayerTriggeredDoor();
-    });
+    this.connectCodeBlockEvent(
+      this.entity,
+      hz.CodeBlockEvents.OnPlayerEnterTrigger,
+      (player: hz.Player) => {
+        this.onPlayerTriggeredDoor(player);
+      },
+    );
 
     this.connectLocalBroadcastEvent(hz.World.onUpdate, () => {
       this.updateDoorState();
@@ -30,15 +36,25 @@ class Door extends hz.Component<typeof Door> {
     }
   }
 
-  private onPlayerTriggeredDoor() {
+  private onPlayerTriggeredDoor(player: hz.Player) {
     console.log('onPlayerTriggeredDoor');
 
-    //TODO: fazer a porta poder ser interagida no meio da animação
     if (this.isAnimating) return;
+    if (this.isLocked) {
+      let playerHasKey: boolean = PlayerDataManager.instance.getPlayerHasKey(player);
+      if (playerHasKey) {
+        this.isLocked = false;
+        this.world.ui.showPopupForPlayer(player, 'Unlocked the door.', 2);
+        //TODO: REMOVER OBJETO DA CHAVE
+      } else {
+        this.world.ui.showPopupForPlayer(player, 'The door is locked.', 2);
+        return;
+      }
+    }
 
-    this.startRotation = this.isOpen ? 90 : 0;
-    this.finalRotation = this.isOpen ? 0 : 90;
-    this.animationDuration = 90 / this.props.openingSpeed;
+    this.startRotation = this.isOpen ? this.maxAngle : 0;
+    this.finalRotation = this.isOpen ? 0 : this.maxAngle;
+    this.animationDuration = this.maxAngle / this.props.openingSpeed;
 
     this.startTime = Date.now();
     this.isAnimating = true;
@@ -63,9 +79,11 @@ class Door extends hz.Component<typeof Door> {
 
     const startRotation = new hz.Vec3(0, this.startRotation, 0);
     const endRotation = new hz.Vec3(0, this.finalRotation, 0);
+
     let newEulerRotation = hz.Vec3.lerp(startRotation, endRotation, animationProgressFraction);
-    let newQuaternion = hz.Quaternion.fromEuler(newEulerRotation);
-    this.props.doorParentEntity!.rotation.set(newQuaternion);
+    let newQuaternionRotation = hz.Quaternion.fromEuler(newEulerRotation);
+
+    this.props.doorParentEntity!.rotation.set(newQuaternionRotation);
   }
 }
 

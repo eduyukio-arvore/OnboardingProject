@@ -1,33 +1,30 @@
 import * as hz from 'horizon/core';
+import { PlayerDataManager } from './PlayerDataManager';
 
 class Key extends hz.Component<typeof Key> {
   static propsDefinition = {};
 
   start() {
-    const owner = this.entity.owner.get();
+    this.connectCodeBlockEvent(
+      this.entity,
+      hz.CodeBlockEvents.OnGrabStart,
+      (isRightHand: boolean, player: hz.Player) => {
+        this.onKeyGrabbed(isRightHand, player);
+      },
+    );
 
-    if (owner === this.world.getServerPlayer()) {
-      console.log('Script owned by Server Player');
-    } else {
-      this.connectCodeBlockEvent(
-        this.entity,
-        hz.CodeBlockEvents.OnGrabStart,
-        this.onWeaponGrabbed.bind(this),
-      );
-
-      this.connectCodeBlockEvent(
-        this.entity,
-        hz.CodeBlockEvents.OnGrabEnd,
-        this.onWeaponDropped.bind(this),
-      );
-    }
+    this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnGrabEnd, (player: hz.Player) => {
+      this.onKeyDropped(player);
+    });
   }
 
-  private onWeaponGrabbed(isRightHand: boolean, player: hz.Player) {
+  private onKeyGrabbed(isRightHand: boolean, player: hz.Player) {
     console.log('PLAYER GRABBED KEY');
+    PlayerDataManager.instance.setPlayerHasKey(player, true);
   }
-  private onWeaponDropped(player: hz.Player) {
+  private onKeyDropped(player: hz.Player) {
     console.log('PLAYER DROPPED KEY');
+    PlayerDataManager.instance.setPlayerHasKey(player, false);
   }
 }
 
