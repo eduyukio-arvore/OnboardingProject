@@ -52,7 +52,7 @@ class Door extends hz.Component<typeof Door> {
       let playerHasKey: boolean = PlayerDataManager.instance.getPlayerHasKey(player);
       if (playerHasKey) {
         this.isLocked = false;
-        this.world.ui.showPopupForPlayer(player, 'Unlocked the door.', 2);
+        this.world.ui.showPopupForPlayer(player, 'Door unlocked.', 2);
         //TODO: REMOVER OBJETO DA CHAVE
       } else {
         this.world.ui.showPopupForPlayer(player, 'The door is locked.', 2);
