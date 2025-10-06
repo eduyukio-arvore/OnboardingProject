@@ -16,6 +16,11 @@ class Key extends hz.Component<typeof Key> {
     this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnGrabEnd, (player: hz.Player) => {
       this.onKeyDropped(player);
     });
+
+    //Pliniao estragando o código
+    this.connectCodeBlockEvent(this.entity, hz.CodeBlockEvents.OnButton1Down, (player) => {
+      console.log(`button 1 down in ${this.entity.name.get()}`);
+    });
   }
 
   /**

@@ -1,5 +1,6 @@
 import * as hz from 'horizon/core';
 import { PlayerDataManager } from './PlayerDataManager';
+import { ON_INPUT } from './Local';
 
 class Door extends hz.Component<typeof Door> {
   static propsDefinition = {
@@ -25,6 +26,10 @@ class Door extends hz.Component<typeof Door> {
         this.onPlayerTriggeredDoor(player);
       },
     );
+
+    this.connectNetworkBroadcastEvent(ON_INPUT, (data) => {
+      this.onPlayerTriggeredDoor(data.player);
+    });
 
     this.async.setInterval(() => {
       this.updateDoorState();
