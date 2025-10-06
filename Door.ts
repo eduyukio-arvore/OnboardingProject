@@ -15,7 +15,7 @@ class Door extends hz.Component<typeof Door> {
   private animationDuration: number = 0;
   private startTime: number = 0;
   private maxOpeningAngle: number = 90;
-  private updateIntervalTickSec: number = 0.02;
+  private updateIntervalTickSec: number = 0.01;
 
   start() {
     this.connectCodeBlockEvent(
