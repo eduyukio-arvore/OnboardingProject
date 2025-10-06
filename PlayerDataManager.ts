@@ -23,7 +23,9 @@ export class PlayerDataManager extends hz.Component<typeof PlayerDataManager> {
    */
   public setPlayerHasKey(player: hz.Player, hasKey: boolean): void {
     this.playerKeyStatus.set(player.id, hasKey);
-    console.log(`[PlayerDataManager] Player ${player.name.get()} key status set to: ${hasKey}`);
+    console.log(
+      `[PlayerDataManager] Player ${player.name.get()} 'has key' status set to: ${hasKey}`,
+    );
   }
 
   /**
